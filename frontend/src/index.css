@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+/* Design System Variables */
+:root {
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Theme Canvas */
+  --color-bg-canvas: #f8fafc; /* Slate 50 */
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f1f5f9;
+  
+  /* Borders */
+  --border-color: rgba(226, 232, 240, 0.8); /* Slate 200 style */
+  --border-color-hover: rgba(203, 213, 225, 1);
+  
+  /* Text */
+  --text-main: #0f172a; /* Slate 900 - highly readable */
+  --text-muted: #475569; /* Slate 600 */
+  --text-dim: #64748b; /* Slate 500 */
+
+  /* Healthcare Colors */
+  --color-primary: #3b82f6; /* Sky 500 */
+  --color-primary-dark: #2563eb; /* Blue 600 */
+  --color-primary-glow: rgba(59, 130, 246, 0.1);
+
+  --color-indigo-brand: #6366f1; /* Indigo 500 */
+  --color-indigo-dark: #4f46e5; /* Indigo 600 */
+  --color-indigo-glow: rgba(99, 102, 241, 0.1);
+  
+  /* Statuses */
+  --color-success: #10b981; /* Emerald 500 */
+  --color-success-bg: #ecfdf5;
+  --color-success-text: #065f46;
+  
+  --color-warning: #f59e0b; /* Amber 500 */
+  --color-warning-bg: #fffbeb;
+  --color-warning-text: #92400e;
+  
+  --color-danger: #ef4444; /* Red 500 */
+  --color-danger-bg: #fef2f2;
+  --color-danger-text: #991b1b;
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'] {
+  --color-bg-canvas: #090d16; /* Deep dark space navy */
+  --color-bg-card: #0f172a; /* Slate 900 background */
+  --color-bg-card-hover: #1e293b;
+  
+  --border-color: rgba(30, 41, 59, 0.8); /* Slate 800 */
+  --border-color-hover: rgba(51, 65, 85, 1);
+  
+  --text-main: #f8fafc; /* Slate 50 */
+  --text-muted: #cbd5e1; /* Slate 300 */
+  --text-dim: #94a3b8; /* Slate 400 */
+
+  --color-primary-glow: rgba(59, 130, 246, 0.15);
+  --color-indigo-glow: rgba(99, 102, 241, 0.15);
+
+  --color-success-bg: rgba(6, 95, 70, 0.2);
+  --color-success-text: #34d399;
+  
+  --color-warning-bg: rgba(146, 64, 14, 0.2);
+  --color-warning-text: #fbbf24;
+  
+  --color-danger-bg: rgba(153, 27, 27, 0.2);
+  --color-danger-text: #f87171;
+}
+
+/* Custom Base Application Styles */
+@layer base {
+  body {
+    @apply antialiased min-h-screen selection:bg-indigo-500/20 selection:text-indigo-200 transition-colors duration-300;
+    background-color: var(--color-bg-canvas);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    @apply tracking-tight font-extrabold;
+  }
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+}
+
+/* Premium Glow Effects */
+.glow-indigo {
+  box-shadow: 0 0 40px -10px var(--color-indigo-glow);
+}
+
+.glow-sky {
+  box-shadow: 0 0 40px -10px var(--color-primary-glow);
+}
+
+/* Custom Card Styling */
+.premium-card {
+  @apply relative overflow-hidden rounded-2xl border transition-all duration-300;
+  background-color: var(--color-bg-card);
+  border-color: var(--border-color);
+}
+
+.premium-card:hover {
+  @apply transform -translate-y-[2px] shadow-xl;
+  border-color: var(--border-color-hover);
+}
+
+/* Animated Underline for Tabs */
+.tab-underline {
+  @apply absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full transition-all duration-300;
+}
+
+/* Micro-animations */
+@keyframes border-pulse {
+  0%, 100% { border-color: var(--border-color); }
+  50% { border-color: var(--color-primary); }
+}
+
+.border-pulse-active {
+  animation: border-pulse 3s infinite ease-in-out;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color-hover);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Loader Shimmer */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.premium-shimmer {
+  @apply relative overflow-hidden;
+  background-color: var(--color-bg-card-hover);
+}
+
+.premium-shimmer::after {
+  @apply absolute inset-0;
+  content: '';
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.16) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.8s infinite;
+}
