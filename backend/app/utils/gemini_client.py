@@ -175,53 +175,64 @@ def generate_patient_explanations(extracted_text: str) -> tuple[str, str]:
     """
     import os
     if os.environ.get("MOCK_GEMINI", "true").lower() == "true":
-        eng_explanation = "### 👋 Welcome & Overview\nHello Rahul, your brain MRI is normal.\n\n### 🧠 What They Found\nThere is mild swelling in your sinuses.\n\n### 💬 Medical Terms Dictionary\n- Maxillary sinus: Air pockets behind cheeks.\n\n### 🌱 Reassurance & Next Steps\nSpeak with your doctor."
-        hin_explanation = "### 👋 स्वागत और संक्षिप्त विवरण\nनमस्ते राहुल जी, आपके दिमाग का स्कैन सामान्य है।\n\n### 🧠 रिपोर्ट में क्या मिला?\nआपके चेहरे के साइनस में हल्की सूजन है।\n\n### 💬 मुख्य चिकित्सा शब्दों का अर्थ\n- मैक्सिलरी साइनस: गालों के पीछे हवा की थैलियां।\n\n### 🌱 आश्वासन और अगले कदम\nचिकित्सक से परामर्श लें।"
+        eng_explanation = "### Summary\nThe brain MRI shows normal findings overall.\n\n### What this is\nA brain MRI is an imaging scan that creates pictures of the brain.\n\n### Common symptoms\nYou may notice headaches or sinus pressure, but these are not severe.\n\n### Why it happens\nMild sinus swelling can be due to allergies or a minor infection.\n\n### Why we are concerned\nThere are no serious concerns, but monitor any worsening symptoms.\n\n### Tests and results\nThe MRI did not find any acute abnormalities.\n\n### Treatment plan\nNo specific treatment needed; consider allergy management if symptoms persist.\n\n### What to expect next\nSymptoms should improve; follow up with your doctor if they worsen.\n\n### Lifestyle changes\nStay hydrated, use saline nasal sprays, and avoid known allergens.\n\n### Red flags\nSeek medical attention if you develop severe headache, vision changes, or fever.\n\n### Questions to ask your doctor\n- Should I take any medication for sinus swelling?\n- What signs indicate I need further testing?\n- How can I prevent future sinus issues?"
+        
+        hin_explanation = "### सारांश\nदिमाग की MRI में कुल मिलाकर कोई असामान्य चीज़ नहीं मिली है।\n\n### यह क्या है\nMRI एक ऐसी इमेजिंग स्कैन है जो दिमाग की तस्वीरें बनाती है।\n\n### सामान्य लक्षण\nआपको सिर में दर्द या साइनस का दबाव महसूस हो सकता है, पर यह गंभीर नहीं है।\n\n### कारण\nहल्का साइनस सूजन एलर्जी या मामूली संक्रमण के कारण हो सकती है।\n\n### चिंता क्यों?\nकोई गंभीर समस्या नहीं है, फिर भी यदि लक्षण बिगड़ें तो देखना जरूरी है।\n\n### परीक्षण और परिणाम\nMRI में कोई तात्कालिक असामान्य नहीं मिला।\n\n### उपचार योजना\nविशेष उपचार आवश्यक नहीं है; यदि लक्षण जारी रहें तो एलर्जी का प्रबंधन करें।\n\n### आगे क्या उम्मीद करें\nलक्षण सुधरने चाहिए; यदि बदतर हों तो डॉक्टर से मिलें।\n\n### जीवनशैली परिवर्तन\nपानी अधिक पिएँ, नमकिंट स्प्रे उपयोग करें, और ज्ञात एलर्जियों से बचें।\n\n### चेतावनी संकेत\nतीव्र सिर दर्द, दृष्टि में बदलाव या बुखार हो तो तुरंत डॉक्टर से मिलें।\n\n### डॉक्टर से पूछने वाले प्रश्न\n- क्या मुझे साइनस की सूजन के लिये दवा लेनी चाहिए?\n- किन संकेतों से आगे की जांच की आवश्यकता है?\n- भविष्य में साइनस की समस्या रोकने के लिये क्या करूँ?"
+        
         return eng_explanation, hin_explanation
 
     if not settings.GEMINI_API_KEY:
         raise GeminiAPIError("Gemini API Key is not configured. Please add GEMINI_API_KEY to your .env file.")
 
     if not extracted_text.strip():
-        return "No text available to explain.", "विवरण के लिए कोई टेक्स्ट उपलब्ध नहीं है।"
+        return "No text available to explain.", "विवरण के लिए कोई टेक्स्ट उपलब्ध नहीं है."
 
     # Define an empathetic layman explanation prompt for both English and Hindi
     prompt = (
-        "You are an empathetic, warm, and highly experienced patient communicator. Your task is to translate the following "
-        "extracted medical report text into clear, comforting, and simple explanations that the patient can easily understand. "
-        "You must generate BOTH an English explanation and a Hindi explanation.\n\n"
-        
-        "You MUST format the output exactly as follows with the two sections separated by the specified markers. Do not include any introductory or concluding conversational text outside the markers:\n\n"
-        
-        "=== ENGLISH PATIENT EXPLANATION ===\n"
-        "### 👋 Welcome & Overview\n"
-        "- A brief, warm greeting explaining what this report is about in simple terms.\n\n"
-        "### 🧠 What They Found (In Plain English)\n"
-        "- Explain the main findings using everyday analogies and layperson terms. Absolutely avoid complex medical jargon "
-        "without immediately translating or explaining it simply. (e.g. explain 'microvascular ischemic changes' as 'tiny wear-and-tear changes in blood vessels').\n\n"
-        "### 💬 Medical Terms Dictionary\n"
-        "- Pick 3-5 complex medical terms found in the report and define them in extremely simple, friendly terms.\n\n"
-        "### 🌱 Reassurance & Next Steps\n"
-        "- Provide warm reassurance. Emphasize that they should discuss these findings with their doctor for professional guidance. "
-        "Suggest simple questions they might want to ask their doctor.\n\n"
-        
-        "=== HINDI PATIENT EXPLANATION ===\n"
-        "Here, write the explanation in simple, everyday Hindi (written in Devanagari script). It must be easily understandable by non-medical users, "
-        "avoid unnecessary medical jargon, and explain findings clearly. Ensure you:\n"
-        "- Explain what they found in clear, daily-use Hindi.\n"
-        "- Mention if findings appear normal.\n"
-        "- Emphasize reassurance and advise doctor consultation. Use the following style as a guideline:\n"
-        "\"इस रिपोर्ट में दिमाग से जुड़ी कोई गंभीर समस्या नहीं मिली है।\n"
-        "नाक के आसपास की साइनस गुहाओं में हल्की सूजन दिखाई दे रही है। यह एलर्जी या संक्रमण के कारण हो सकती है।\n"
-        "अधिक जानकारी के लिए अपने डॉक्टर से सलाह लें।\"\n"
-        "- Never create diagnoses that are not present in the report.\n\n"
-        
-        "**Strict Guidelines for both:**\n"
-        "- Keep the tone comforting, clear, and supportive. Empathize and reduce anxiety, but do not hide abnormal results—instead, explain them gently.\n"
-        "- Do not diagnose or prescribe treatment.\n\n"
-        
-        f"--- EXTRACTED MEDICAL REPORT TEXT ---\n{extracted_text}\n--------------------------------------"
-    )
+    "You are an empathetic, warm, and highly experienced patient communicator. Your task is to translate the following "
+    "extracted medical report text into clear, comforting, and simple explanations that the patient can easily understand. "
+    "You must generate BOTH an English explanation and a Hindi explanation.\n\n"
+    "\n"
+    "You MUST format the output exactly as follows with the two sections separated by the specified markers. Do not include any introductory or concluding conversational text outside the markers:\n\n"
+    "\n"
+    "=== ENGLISH PATIENT EXPLANATION ===\n"
+    "### 👋 Welcome & Overview\n"
+    "- Greet the patient warmly and give a brief overview of what this report covers.\n\n"
+    "### 📄 What the Report Means\n"
+    "- Explain in plain language what the main findings indicate, using everyday analogies.\n\n"
+    "### 🤒 Common Symptoms\n"
+    "- List typical symptoms related to the findings, described in simple terms.\n\n"
+    "### 🧬 Why It Happens\n"
+    "- Provide a brief explanation of the underlying reasons or causes in layman terms.\n\n"
+    "### ⚠️ Why We Are Concerned\n"
+    "- Discuss why these findings matter for the patient's health, stressing any important implications.\n\n"
+    "### 🧪 Tests and Results\n"
+    "- Summarize any tests performed and what the results show, avoiding technical jargon.\n\n"
+    "### 💊 Treatment Plan\n"
+    "- Outline recommended treatments or next steps in clear, actionable language.\n\n"
+    "### 📅 What to Expect Next\n"
+    "- Explain the likely course of action and timeline for follow‑up.\n\n"
+    "### 🏃‍♀️ Lifestyle Changes\n"
+    "- Suggest practical lifestyle adjustments that can help, described simply.\n\n"
+    "### 🚨 Red Flags\n"
+    "- Highlight warning signs that should prompt the patient to seek immediate medical attention.\n\n"
+    "### ❓ Questions to Ask Your Doctor\n"
+    "- Provide a short list of helpful questions the patient might want to discuss with their physician.\n\n"
+    "### 📚 Medical Terms Dictionary\n"
+    "- Pick 3‑5 complex terms from the report and define them in extremely simple, friendly language.\n\n"
+    "### 🌱 Reassurance & Next Steps\n"
+    "- Offer comforting reassurance and encourage follow‑up with their doctor, including suggested questions.\n\n"
+    "\n"
+    "=== HINDI PATIENT EXPLANATION ===\n"
+    "Here, write the explanation in simple, everyday Hindi (Devanagari script). It must be easily understandable by non‑medical users, avoid jargon, and follow the same section structure as English. Use these guidelines:\n"
+    "- प्रत्येक सेक्शन को ऊपर बताए गए अंग्रेजी सेक्शन के समान क्रम में लिखें।\n"
+    "- सरल शब्दों में समझाएँ, जैसे सामान्य रोग की लक्षण, कारण, उपचार आदि।\n"
+    "- आश्वासन दें और डॉक्टर से मिलने की सलाह दें।\n"
+    "- महत्वपूर्ण बातों को उजागर करने के लिए लाल झंडे (Red Flags) का उल्लेख करें।\n"
+    "- डॉक्टर से पूछने योग्य प्रश्नों की सूची दें।\n"
+    "\n"
+    "--- EXTRACTED MEDICAL REPORT TEXT ---\n{extracted_text}\n--------------------------------------"
+)
 
     try:
         logger.info("Calling Gemini API to generate patient explanations (English & Hindi)...")

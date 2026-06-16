@@ -217,7 +217,7 @@ export default function ReportDetails() {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index} className="font-extrabold text-slate-900 dark:text-slate-100">{part.slice(2, -2)}</strong>;
+        return <strong key={index} className="font-extrabold text-slate-900 dark:text-white">{part.slice(2, -2)}</strong>;
       }
       return part;
     });
@@ -225,7 +225,7 @@ export default function ReportDetails() {
 
   // Markdown renderer
   const parseMarkdown = (text: string | null) => {
-    if (!text) return <p className="text-slate-600 italic">No summary text available.</p>;
+    if (!text) return <p className="text-slate-500 dark:text-slate-400 italic text-sm">No content available.</p>;
 
     return text.split('\n').map((line, idx) => {
       const trimmed = line.trim();
@@ -236,7 +236,7 @@ export default function ReportDetails() {
 
       if (trimmed.startsWith('### ')) {
         return (
-          <h4 key={idx} className="font-heading font-extrabold text-sm sm:text-base text-slate-800 dark:text-slate-200 mt-6 mb-2 tracking-tight flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-850 pb-1">
+          <h4 key={idx} className="font-heading font-extrabold text-sm sm:text-base text-slate-900 dark:text-indigo-300 mt-6 mb-2 tracking-tight flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-700 pb-1">
             <span>{trimmed.replace('### ', '')}</span>
           </h4>
         );
@@ -244,7 +244,7 @@ export default function ReportDetails() {
 
       if (trimmed.startsWith('## ')) {
         return (
-          <h3 key={idx} className="font-heading font-extrabold text-base sm:text-lg text-slate-850 dark:text-slate-100 mt-7 mb-3 tracking-tight border-b border-slate-250/40 dark:border-slate-800/80 pb-1.5">
+          <h3 key={idx} className="font-heading font-extrabold text-base sm:text-lg text-slate-900 dark:text-white mt-7 mb-3 tracking-tight border-b border-slate-200 dark:border-slate-700 pb-1.5">
             {trimmed.replace('## ', '')}
           </h3>
         );
@@ -252,7 +252,7 @@ export default function ReportDetails() {
 
       if (trimmed.startsWith('# ')) {
         return (
-          <h2 key={idx} className="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-slate-50 mt-8 mb-4 tracking-tight">
+          <h2 key={idx} className="font-heading font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white mt-8 mb-4 tracking-tight">
             {trimmed.replace('# ', '')}
           </h2>
         );
@@ -261,14 +261,14 @@ export default function ReportDetails() {
       if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
         const content = trimmed.substring(2);
         return (
-          <li key={idx} className="list-none relative text-xs sm:text-sm text-slate-800 dark:text-slate-300 mb-2 leading-relaxed pl-5 before:content-['•'] before:absolute before:left-1 before:top-0 before:text-sky-500 before:font-bold">
+          <li key={idx} className="list-none relative text-sm sm:text-base text-slate-800 dark:text-slate-200 mb-2.5 leading-relaxed pl-5 before:content-['•'] before:absolute before:left-1 before:top-0 before:text-indigo-400 before:font-bold">
             {renderBoldText(content)}
           </li>
         );
       }
 
       return (
-        <p key={idx} className="text-xs sm:text-sm text-slate-800 dark:text-slate-350 leading-relaxed mb-3">
+        <p key={idx} className="text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed mb-3">
           {renderBoldText(trimmed)}
         </p>
       );
@@ -543,7 +543,7 @@ export default function ReportDetails() {
                       </div>
                     </div>
 
-                    <div className="p-6 md:p-8 flex-1 prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-300 bg-white dark:bg-slate-900 leading-relaxed max-w-prose">
+                    <div className="p-6 md:p-8 flex-1 max-w-none text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 leading-relaxed overflow-y-auto">
                       {summaryLanguage === 'en' ? (
                         parseMarkdown(report.ai_summary)
                       ) : (
@@ -610,7 +610,7 @@ export default function ReportDetails() {
                       </div>
                     </div>
 
-                    <div className="p-6 md:p-8 flex-1 prose dark:prose-invert max-w-none text-slate-800 dark:text-slate-300 bg-white dark:bg-slate-900 flex flex-col justify-between max-w-prose">
+                    <div className="p-6 md:p-8 flex-1 max-w-none text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 flex flex-col justify-between overflow-y-auto">
                       <div>
                         {language === 'en' ? (
                           parseMarkdown(report.patient_explanation)
